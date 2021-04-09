@@ -2,6 +2,8 @@ package com.basmaonline.ws.controllers;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +28,7 @@ public class UserController {
 	
 	
 	@GetMapping(path ="/{id}")  // Method Get pour Affiche list Users  // Serialize
-	public UserResponse getUser(@PathVariable String id) {
+	public ResponseEntity<UserResponse> getUser(@PathVariable String id) {
 		
 	UserDto userDto = userService.getUserByUserId(id);
 	
@@ -34,11 +36,12 @@ public class UserController {
 	
 	BeanUtils.copyProperties(userDto, userResponse);
 	
-	return userResponse;
+	return new ResponseEntity<>(userResponse ,HttpStatus.OK);
+	
 	}
 	
 	@PostMapping // Method Post Pour Cree un User // deSerialize
-	public UserResponse createUser(@RequestBody UserRequest userRequest) {
+	public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
 		
 		UserDto userDto = new UserDto();
 		BeanUtils.copyProperties(userRequest, userDto);
@@ -49,13 +52,14 @@ public class UserController {
 		
 		BeanUtils.copyProperties(createUser, userResponse);
 		
-		return userResponse;
+		
+		return new ResponseEntity<>(userResponse ,HttpStatus.CREATED);
 		
 		
 	}
 	
 	@PutMapping(path ="/{id}") // Method Put pour modifier un user
-	public UserResponse updateUser(@PathVariable String id, @RequestBody UserRequest userRequest) {
+	public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UserRequest userRequest) {
 		
 		UserDto userDto = new UserDto();
 		
@@ -67,11 +71,13 @@ public class UserController {
 		
 		BeanUtils.copyProperties(updateUser, userResponse);
 		
-		return userResponse;
+		return new ResponseEntity<>(userResponse ,HttpStatus.ACCEPTED);
 	}
 	
 	@DeleteMapping(path ="/{id}") // Method delete pour supprime un user
-	public void deleteUser(@PathVariable String id) {
+	public ResponseEntity<Object> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
+		
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
